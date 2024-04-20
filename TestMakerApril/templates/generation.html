@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Badges</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .subject-badge {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .card-text {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .placeholder {
+            background-color: #f0f0f0; /* Placeholder background color */
+            margin: 2px; /* Adjust margin as needed */
+            height: 20px; /* Adjust height as needed */
+            width: calc(33.33% - 4px); /* Calculate width for three placeholders per line */
+            border-radius: 4px; /* Rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- Loop through subjects and organize them into cards -->
+            {% for subject in subjects %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ subject }}</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="" class="btn btn-primary">generate test</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <!-- Placeholder card to maintain grid layout -->
+            <div class="col-md-4">
+                <div class="card" aria-hidden="true">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title placeholder-glow">
+                            <span class="placeholder col-6"></span>
+                        </h5>
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                        </p>
+                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

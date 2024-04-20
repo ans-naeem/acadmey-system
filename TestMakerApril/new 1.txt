@@ -1,0 +1,15 @@
+Fetch  all classes:
+selet * from class
+
+fetch all subject for that specific class:
+select * from subject where class_id=
+
+fetch all chapters for that specific subject
+
+fetch all short/long/mcqs for that specfic chapters
+
+fetch all tests generated,
+
+Fetch all translations for a specific question
+
+Fetch all
