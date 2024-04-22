@@ -38,6 +38,7 @@ class databaseHandler:
     def getterWithId(self,queryname,id):
         dbhandler = databaseQueryHandler()
         query=getattr(dbhandler,queryname)
+
         conn = connection()
         cursor = conn.cursor()
         cursor.execute(query, id)
