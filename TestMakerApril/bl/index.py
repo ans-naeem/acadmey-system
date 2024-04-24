@@ -23,7 +23,7 @@ def generatetable(queryname,id):
     classes_and_ids = [(row[0], row[1]) for row in result]
 
     #data=[row[1] for row in result]
-    return render_template("dynamicgeneration.html",idsandname=classes_and_ids)
+    return render_template("dynamicgeneration.html",idsandname=classes_and_ids,query=queryname)
 
 
 
