@@ -27,4 +27,13 @@ def generatetable(queryname,id):
 
 
 
+@index_blueprint.route('/generatequestion/<queryname>/<id>/<type>')
+def generatequestion(queryname,id,type):
+    dbhandler=databaseHandler()
+    result=dbhandler.getterWithId(queryname,id,type)
+    questions=[row[1] for row in result]
+    return render_template("generatequestions.html",questions=questions)
+
+
+
 

@@ -28,36 +28,19 @@
     <div class="container">
         <div class="row">
             <!-- Loop through subjects and organize them into cards -->
-            {% for id,name in idsandname %}
-			
+			<div class="table">
+							<table>
+							<th></th>
+            {% for ques in questions %}
             <div class="col-md-4">
-                <div class="card">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ name }}</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-						{%if query=="fetchSubjects"%}
-							<a href="{{url_for('index_blueprint.generatetable', queryname='fetchChapters',id=id)}}" class="btn btn-primary">Proceed Test</a>
-							
-						{%elif query=='fetchChapters'%}
-						<li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down"></i></a>
-								<ul>
-								  <li><a href="#">Drop Down 1</a></li>
-								  <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
-									<ul>
-									  <li><a href="{{url_for('index_blueprint.generatequestion', queryname='fetchQuestions',id=id,type='L')}}" class="btn btn-primary">Long question</a></li>
-									 
-									  <li><a href="{{url_for('index_blueprint.generatequestion', queryname='fetchQuestions',id=id,type='S')}}" class="btn btn-primary">Short question</a></li>
-									</ul>
-             
-								</li>
-								</ul>
-							</li>
-						{%else%}
-                        <a href="{{url_for('index_blueprint.generatetable', queryname='fetchSubjects',id=id)}}" class="btn btn-primary">Proceed Test</a>
-						{%endif%}
-                    </div>
-                </div>
+                    
+							<tr>
+							{{ques}}
+							</tr>
+							</table>
+                        
+                        <a href="{{url_for('index_blueprint.generatetable', queryname='fetchSubjects',id=id)}}" class="btn btn-primary">generate test</a>
+                    
             </div>
             {% endfor %}
             <!-- Placeholder card to maintain grid layout -->
