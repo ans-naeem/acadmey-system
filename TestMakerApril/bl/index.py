@@ -11,7 +11,20 @@ def index():
 def generateclasses(queryname):
     dbhandler = databaseHandler()
     result=dbhandler.getter(queryname)
-    classes=[row[1]for row in result]
-    return render_template("generation.html",subjects=classes)
+    #classes=[row[1]for row in result]
+    classes_and_ids = [(row[0], row[1]) for row in result]
+
+    return render_template("generation.html",idsandname=classes_and_ids)
+
+@index_blueprint.route('/generatetable/<queryname>/<id>')
+def generatetable(queryname,id):
+    dbhandler = databaseHandler()
+    result=dbhandler.getterWithId(queryname,id)
+    classes_and_ids = [(row[0], row[1]) for row in result]
+
+    #data=[row[1] for row in result]
+    return render_template("dynamicgeneration.html",idsandname=classes_and_ids,query=queryname)
+
+
 
 

@@ -11,7 +11,8 @@ class databaseQueryHandler:
     fetchUsers="SELECT * FROM `test_maker`.`user`;"
     fetchClasses="SELECT * FROM `test_maker`.`class`;"
 
-    updateChapter = ""
+    fetchSubjects="SELECT * FROM `test_maker`.`subject` WHERE `class_id`=%s;"
+    fetchChapters = "SELECT * FROM `test_maker`.`chapter` WHERE `subject_id`=%s;"
     updateQuestion = ""
     updateTranslation = ""
     updateTest = ""
