@@ -1,4 +1,6 @@
-from flask import Blueprint,render_template,url_for,request
+import json
+
+from flask import Blueprint, render_template, url_for, request, make_response
 from dao.databaseConnection import connection
 from dao.databaseHandler import databaseHandler
 
@@ -25,8 +27,10 @@ def login():
                     allow=1
                 else:
                     allow=0
-                return render_template("index.html",allowed=allow)
-
+                serilize=json.dumps(user[1])
+                resp=make_response(render_template("index.html",allowed=allow))
+                resp.set_cookie("username",user[1])
+                return resp
         return 'Invalid username or password. Please try again.'
 
 #
