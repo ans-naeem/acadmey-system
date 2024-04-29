@@ -31,20 +31,20 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-					<form action="{{url_for('index_blueprint.submitquestion')}}" method="POST">
-                    <tbody>
-                        {% for ques in questions %}
-                        <tr>
-                            <td>{{ ques }}</td>
-                            <td><a href="" class="btn btn-primary togglebutton">Add question</a></td>
-							<td><input type="checkbox" class="questionCheckbox"></td>
+					<form action="{{ url_for('index_blueprint.submitquestion') }}" method="POST">
+							<tbody>
+								{% for ques in questions %}
+								<tr>
+									<td>{{ ques }}</td>
+									<td><a href="" class="btn btn-primary togglebutton">Add question</a></td>
+									<td><input type="checkbox" class="questionCheckbox" name="selected_questions[]" value="{{ ques }}"></td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<button type="submit">Submit</button>
+					</form>
 
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-					</table>
-					<button type="submit">Submit</button>
-				</form>
             </div>
         </div>
     </div>

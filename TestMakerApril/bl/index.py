@@ -82,7 +82,7 @@ def generatequestion(queryname,id,type):
 
 @index_blueprint.route('/submitquestion',methods=['GET','POST'])
 def submitquestion():
-    checked_questions = request.form.getlist('questionCheckbox')
+    selected_questions = request.form.getlist('selected_questions[]')
     # Process the checked questions as needed
-    print(checked_questions)
-    return 'Checked questions: ' + ', '.join(checked_questions)
+    print(selected_questions)
+    return 'Checked questions: ' + ', '.join(selected_questions)
