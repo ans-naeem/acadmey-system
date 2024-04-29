@@ -37,31 +37,24 @@
                         <h5 class="card-title">{{ name }}</h5>
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
 						{%if query=="fetchSubjects"%}
-							<a href="{{url_for('index_blueprint.generatetable', queryname='fetchChapters',id=id)}}" class="btn btn-primary">Proceed Test</a>
-						{%else%}
-                        <a href="{{url_for('index_blueprint.generatetable', queryname='fetchSubjects',id=id)}}" class="btn btn-primary">Proceed Test</a>
+							<a href="{{url_for('index_blueprint.generatetable', queryname='fetchChapters',id=id,name=name)}}" class="btn btn-primary">Proceed Test</a>
+							
+						{%elif query=='fetchChapters'%}
+						<span>Select Question Type</span> <i class="bi bi-chevron-down"></i>
+						
+								<ul>
+										<li style="margin-bottom: 5px;"><a href="{{ url_for('index_blueprint.generatequestion', queryname='fetchQuestions', id=id, type='L') }}" class="btn btn-primary">Long question</a></li>
+										<li style="margin-bottom: 5px;"><a href="{{ url_for('index_blueprint.generatequestion', queryname='fetchQuestions', id=id, type='S') }}" class="btn btn-primary">Short question</a></li>
+								</ul>
+
+						
 						{%endif%}
                     </div>
                 </div>
             </div>
             {% endfor %}
             <!-- Placeholder card to maintain grid layout -->
-            <div class="col-md-4">
-                <div class="card" aria-hidden="true">
-                    <img src="..." class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title placeholder-glow">
-                            <span class="placeholder col-6"></span>
-                        </h5>
-                        <p class="card-text placeholder-glow">
-                            <span class="placeholder col-4"></span>
-                            <span class="placeholder col-4"></span>
-                            <span class="placeholder col-4"></span>
-                        </p>
-                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6"></a>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </body>

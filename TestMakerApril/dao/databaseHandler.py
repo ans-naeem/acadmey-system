@@ -35,17 +35,32 @@ class databaseHandler:
         conn.close()
         return data
 
-    def getterWithId(self,queryname,id):
+    def getterWithId(self,queryname,id,type=None):
         dbhandler = databaseQueryHandler()
         query=getattr(dbhandler,queryname)
 
         conn = connection()
         cursor = conn.cursor()
-        cursor.execute(query,(id,))
+        if(type==None):
+            cursor.execute(query,(id,))
+        else:
+            cursor.execute(query,(id,type,))
         data=cursor.fetchall()
         cursor.close()
         conn.close()
         return data
+    # def getterwithId(self,queryname,id,type):
+    #     dbhandler = databaseQueryHandler()
+    #     query=getattr(dbhandler,queryname)
+    #     conn=connection()
+    #     cursor = conn.cursor()
+    #     cursor.execute(query,(id,type,))
+    #     data=cursor.fetchall()
+    #     cursor.close()
+    #     conn.close()
+    #     return data
+
+
 
 
 
