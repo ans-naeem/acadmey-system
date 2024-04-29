@@ -31,17 +31,41 @@
                             <th>Action</th>
                         </tr>
                     </thead>
+					<form action="{{url_for('index_blueprint.submitquestion')}}" method="POST">
                     <tbody>
                         {% for ques in questions %}
                         <tr>
                             <td>{{ ques }}</td>
-                            <td><a href="" class="btn btn-primary">Add question</a></td>
+                            <td><a href="" class="btn btn-primary togglebutton">Add question</a></td>
+							<td><input type="checkbox" class="questionCheckbox"></td>
+
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+					</table>
+					<button type="submit">Submit</button>
+				</form>
             </div>
         </div>
     </div>
+	<script>
+    // Since you have multiple checkboxes and buttons, you need to use class instead of id
+    // and set up the event listeners for each button
+    document.querySelectorAll('.btn-primary').forEach(function(button, index) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default anchor action
+            var checkbox = document.querySelectorAll('.questionCheckbox')[index]; // Get the corresponding checkbox
+            
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                button.textContent = 'Add question';
+            } else {
+                checkbox.checked = true;
+                button.textContent = 'Remove question';
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
