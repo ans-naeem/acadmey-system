@@ -19,20 +19,26 @@
             border-radius: 4px; /* Rounded corners */
         }
         #countBar {
-            background-color: #190913; /* Blue color */
-            color: white;
-            padding: 5px 10px;
-            font-size: 14px;
-        }
+			background-color: #190913;
+			color: white;
+			padding: 5px 10px;
+			font-size: 14px;
+			position: fixed;
+			bottom: 0px;
+			left: 0;
+			width: 100%;
+			max-height: 100vh; /* Set a maximum height */
+		}
+
         .sidebar {
             position: fixed;
 			top: 0;
 			left: 0; /* Left aligned */
 			height: 100vh; /* Full height of the viewport */
 			width: 15%; /* Width of the fixed sidebar */
-			background-color: #19223; /* Blue color */
+			background-color: #190913; /* Blue color */
 			color: white;
-			padding: 15px 20px;
+			padding: 75px 30px;
 			font-size: 14px;
 			z-index: 1000; /* Ensure count bar is above other content */
 					
@@ -46,21 +52,28 @@
     </style>
 </head>
 <body>
+<div style='text-align:center;'>{{clas}} ----{{subject}}</div>
     <div class="container">
-		<div id="countBar" class="text-center">Selected Questions: 0</div>
+		<div id="countBar" class="text-center">
+		Selected Questions: 0</div>
         <div class="row">
 
             <div class="col-md-2 ">
                 <div class="sidebar ">
                     <!-- You can add additional buttons or options here -->
                     <button type="createsection" class="btn btn-success">Create Section</button>
-                    <button type="Longquestion" class="btn btn-success">Long Questions</button>
+					{%if type=='Long'%}
+						<button type="Longquestion" class="btn btn-success">Short Questions</button>
+					{%else%}
+						<button type="Longquestion" class="btn btn-success">Long Questions</button>
+					{%endif%}
                     <button type="mcqs" class="btn btn-success">Mcqs</button>
 
                     <button type="submit" class="btn btn-success">Submit</button>
                 </div>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10" style="margin-top: 90px;">
+			
                 <table class="table">
                     <thead>
                         <tr>
