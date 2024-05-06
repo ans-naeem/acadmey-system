@@ -69,7 +69,7 @@
 					{%endif%}
                     <button type="mcqs" class="btn btn-success">Mcqs</button>
 
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <!-- <button type="submit" class="btn btn-success">Submit</button> -->
                 </div>
             </div>
             <div class="col-md-10" style="margin-top: 90px;">
@@ -79,18 +79,22 @@
                         <tr>
                             <th>Subject</th>
                             <th>Action</th>
+							<th><a href=>Save these as a Part</a></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for ques in questions %}
-                        <tr>
-                            <td>{{ ques }}</td>
-                            <td><a href="" class="btn btn-primary togglebutton">Add question</a></td>
-                            <td><input type="checkbox" class="questionCheckbox" name="selected_questions[]" value="{{ ques }}"></td>
-                        </tr>
-                        {% endfor %}
-
-                    </tbody>
+                    <form action="{{ url_for('index_blueprint.submitquestion') }}" method="POST">
+							<tbody>
+								{% for ques in questions %}
+								<tr>
+									<td>{{ ques }}</td>
+									<td><a href="" class="btn btn-primary togglebutton">Add question</a></td>
+									<td><input type="checkbox" class="questionCheckbox" name="selected_questions[]" value="{{ ques }}"></td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<button type="submit">Submit</button>
+					</form>
                 </table>
             </div>
         </div>

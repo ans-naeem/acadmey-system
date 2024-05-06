@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Badges</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .subject-badge {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .card-text {
+            display: flex;
+            flex-wrap: wrap;
+        }
+		#countBar {
+			background-color: #190913;
+			color: white;
+			padding: 5px 10px;
+			font-size: 14px;
+			position: fixed;
+			bottom: 0px;
+			left: 0;
+			width: 100%;
+			max-height: 100vh; /* Set a maximum height */
+		}
+        .placeholder {
+            background-color: #f070f0; /* Placeholder background color */
+            margin: 2px; /* Adjust margin as needed */
+            height: 20px; /* Adjust height as needed */
+            width: calc(33.33% - 4px); /* Calculate width for three placeholders per line */
+            border-radius: 4px; /* Rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+		<div id="countBar" class="text-center">
+			Selected Chapters: 0
+		</div>
+		
+		<table class="table">
+            <!-- Loop through subjects and organize them into cards -->
+			<form action="{{ url_for('index_blueprint.generatequestion',queryname='fetchQuestions') }}" method="POST">
+				<thead>
+                        <tr>
+                            <th>Chapter name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+				{% for id,name in idsandname %}
+			
+					<tbody>
+						{%if query=='fetchChapters'%}
+								<tr>
+									<td>{{name}}</td>
+									<td><a href="" class="btn btn-primary buttonfunction togglebutton">Select Chapter</a></td>
+									<td><input type="checkbox" class="chapterCheckbox" name="selected_chapters[]" value="{{ id }}"></td>
+									
+								</tr>
+
+
+
+				
+						{%endif%}
+
+				{% endfor %}
+				</tbody>
+			</table>
+
+				<button type="submit">Proceed</button>
+
+            <!-- Placeholder card to maintain grid layout -->
+        	</form>
+
+        </div>
+    </div>
+	<script>
+    // Since you have multiple checkboxes and buttons, you need to use class instead of id
+    // and set up the event listeners for each button
+    document.querySelectorAll('.buttonfunction').forEach(function(button, index) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default anchor action
+            var checkbox = document.querySelectorAll('.chapterCheckbox')[index]; // Get the corresponding checkbox
+            
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                button.textContent = 'Select Chapter';
+            } else {
+                checkbox.checked = true;
+                button.textContent = 'Deselect Chapter';
+            }
+			
+			var selectedQuestions=document.querySelectorAll('.chapterCheckbox:checked').length;
+			updateQuestionCountBar(selectedQuestions);
+        });
+    });
+	
+	function updateQuestionCountBar(count){
+		var questionCountBar=document.getElementById('countBar');
+		questionCountBar.textContent='Selected Questions: '+count;
+	}
+</script>
+</body>
+</html>
