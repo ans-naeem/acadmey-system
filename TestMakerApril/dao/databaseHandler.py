@@ -44,6 +44,15 @@ class databaseHandler:
         if(type==None):
             cursor.execute(query,(id,))
         else:
+            #first remove commas from ids received to count how many placeholders we need
+            temp_ids=id.split(',')
+            #and then make place holder variable and replace it with actuall place holder written in query
+            placeholders = ', '.join(['%s'] * len(temp_ids))
+            print(placeholders)
+            query=query.replace("placeholders",placeholders)
+
+            print(query)
+            print(id)
             cursor.execute(query,(id,type,))
         data=cursor.fetchall()
         cursor.close()

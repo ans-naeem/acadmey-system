@@ -50,7 +50,13 @@ def generatechapter(queryname,id,name):
 
 @index_blueprint.route('/generatequestion/<queryname>',methods=['GET','POST'])
 def generatequestion(queryname):
+    #getting the list from form and concatenate "," to work with sql query.
     selected_chapters=request.form.getlist('selected_chapters[]')
+    selected_chapters = selected_chapters[0].split(',')
+
+    #selected_chapters = ",".join(str(chapter_id) for chapter_id in selected_chapters)
+    #after that selected_chapters will look like this:1,2,3,4
+
     dbhandler=databaseHandler()
     result=dbhandler.getterWithId(queryname,selected_chapters,"S")
     questions=[row[1] for row in result]
