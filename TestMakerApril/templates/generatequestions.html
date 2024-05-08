@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-<div style='text-align:center;'>{{clas}} ----{{subject}}</div>
+<div style='text-align:center;'>{{clas}} ---- {{subject}}---{%if type=="L"%}Long{%elif type=="S"%}Short{%else%}MCQS{%endif%}</div>
     <div class="container">
 		<div id="countBar" class="text-center">
 		Selected Questions: 0</div>
@@ -61,13 +61,14 @@
             <div class="col-md-2 ">
                 <div class="sidebar ">
                     <!-- You can add additional buttons or options here -->
-                    <button type="createsection" class="btn btn-success">Create Section</button>
-					{%if type=='Long'%}
+					{%if type=="S"%}
 						<button type="Longquestion" class="btn btn-success">Short Questions</button>
-					{%else%}
+					{%elif type=="L"%}
 						<button type="Longquestion" class="btn btn-success">Long Questions</button>
+					{%else %}
+						<button type="Longquestion" class="btn btn-success">Mcqs</button>
+
 					{%endif%}
-                    <button type="mcqs" class="btn btn-success">Mcqs</button>
 
                     <!-- <button type="submit" class="btn btn-success">Submit</button> -->
                 </div>
@@ -83,6 +84,14 @@
                         </tr>
                     </thead>
                     <form action="{{ url_for('index_blueprint.submitquestion') }}" method="POST">
+						<div class="form-group">
+							<label for="questionType">Question Type:</label>
+							<select class="form-control" id="questionType" name="question_type">
+								<option value="long">Long</option>
+								<option value="short">Short</option>
+								<option value="mcqs">MCQs</option>
+							</select>
+						</div>
 							<tbody>
 								{% for ques in questions %}
 								<tr>
@@ -93,7 +102,7 @@
 								{% endfor %}
 							</tbody>
 						</table>
-						<button type="submit">Submit</button>
+						<button type="submit">Save and generate PDF</button>
 					</form>
                 </table>
             </div>

@@ -44,16 +44,18 @@ class databaseHandler:
         if(type==None):
             cursor.execute(query,(id,))
         else:
-            #first remove commas from ids received to count how many placeholders we need
-            temp_ids=id.split(',')
-            #and then make place holder variable and replace it with actuall place holder written in query
-            placeholders = ', '.join(['%s'] * len(temp_ids))
-            print(placeholders)
+            print("Select chap_ids are :"+str(id))
+            #finding the count to make equal number of place holders
+            temp_ids=len(id)
+
+            #now if we see there is a word place holder in our query.we need to replace that with
+            #equal number of %S so we just do this.
+            placeholders = ', '.join(['%s'] * temp_ids)
+
             query=query.replace("placeholders",placeholders)
 
-            print(query)
-            print(id)
-            cursor.execute(query,(id,type,))
+            print("Query being used to fetch questions: "+query)
+            cursor.execute(query, (*id, type))
         data=cursor.fetchall()
         cursor.close()
         conn.close()

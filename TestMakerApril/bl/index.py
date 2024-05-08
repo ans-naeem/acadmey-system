@@ -51,18 +51,22 @@ def generatechapter(queryname,id,name):
 @index_blueprint.route('/generatequestion/<queryname>',methods=['GET','POST'])
 def generatequestion(queryname):
     #getting the list from form and concatenate "," to work with sql query.
+    question_type = str(request.form.get('question_type'))
     selected_chapters=request.form.getlist('selected_chapters[]')
-    selected_chapters = selected_chapters[0].split(',')
-
-    #selected_chapters = ",".join(str(chapter_id) for chapter_id in selected_chapters)
-    #after that selected_chapters will look like this:1,2,3,4
+    if(question_type=="short"):
+        question_type="S"
+    elif(question_type=="long"):
+        question_type="L"
+    else:
+        question_type="M"
+    print (question_type)
 
     dbhandler=databaseHandler()
-    result=dbhandler.getterWithId(queryname,selected_chapters,"S")
+    result=dbhandler.getterWithId(queryname,selected_chapters,question_type)
     questions=[row[1] for row in result]
     clas=request.cookies.get('class')
     subject=request.cookies.get('subject')
-    return render_template("generatequestions.html",questions=questions,clas=clas,subject=subject,type="Short")
+    return render_template("generatequestions.html",questions=questions,clas=clas,subject=subject,type=question_type)
 
 
 # @index_blueprint.route('/submitChapter/queryname',methods=['GET','POST'])

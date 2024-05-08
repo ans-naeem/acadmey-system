@@ -44,6 +44,14 @@
 		<table class="table">
             <!-- Loop through subjects and organize them into cards -->
 			<form action="{{ url_for('index_blueprint.generatequestion',queryname='fetchQuestions') }}" method="POST">
+				<div class="form-group">
+					<label for="questionType">Question Type:</label>
+					<select class="form-control" id="questionType" name="question_type">
+						<option value="long">Long</option>
+						<option value="short">Short</option>
+						<option value="mcqs">MCQs</option>
+					</select>
+				</div>
 				<thead>
                         <tr>
                             <th>Chapter name</th>
