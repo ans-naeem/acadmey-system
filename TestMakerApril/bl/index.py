@@ -11,74 +11,69 @@ def index():
 @index_blueprint.route('/generateclasses/<queryname>')
 def generateclasses(queryname):
     dbhandler = databaseHandler()
+    if(queryname=="..."):
+        return"its a traiTOR"
     result=dbhandler.getter(queryname)
     #classes=[row[1]for row in result]
     classes_and_ids = [(row[0], row[1]) for row in result]
 
     serilized_Data=json.dumps(classes_and_ids)
-    response=make_response(render_template("generation.html",idsandname=classes_and_ids))
-    response.set_cookie('class', '', expires=0)
-    response.set_cookie('subject', '', expires=0)
-    response.set_cookie('chapter', '', expires=0)
+    response=make_response(render_template("generateClasses.html",idsandname=classes_and_ids))
+    response.set_cookie("class", '', expires=0)
+    response.set_cookie("subject", '', expires=0)
+    response.set_cookie("chapter", '', expires=0)
 
     #response.set_cookie('class',serilized_Data)
     return response
 
-@index_blueprint.route('/generatetable/<queryname>/<id>/<name>')
-def generatetable(queryname,id,name):
+@index_blueprint.route('/generatesubject/<queryname>/<id>/<name>')
+def generatesubject(queryname,id,name):
     dbhandler = databaseHandler()
     result=dbhandler.getterWithId(queryname,id)
     classes_and_ids = [(row[0], row[1]) for row in result]
     #passing query name to recognize in html pages
-    resp=make_response(render_template("dynamicgeneration.html",idsandname=classes_and_ids,query=queryname))
-    if("subject" in queryname.lower()):
-        resp.set_cookie('class',name)
-        print("there exist a subject in queryname")
-        print(request.cookies.get('class'))
-
-    if("chapter" in queryname.lower()):
-        resp.set_cookie('subject',name)
-        print("there exist a chapter in queryname")
-        print(request.cookies.get('subject'))
-
-
-
-
-
-
-    #data=[row[1] for row in result]
-    # if(request.cookies.get('subject')):
-    #     resp.set_cookie('chapter', json.dumps(name))
-    # else:
-    #     resp.set_cookie('subject',json.dumps(name))
-    # if(request.cookies.get('class')!=None and request.cookies.get('subject')!=None):
-    #     resp.set_cookie('chapter',name)
-    #     print("chapter: ")
-    #
-    #     print(request.cookies.get('chapter'))
-    # elif(request.cookies.get('class')!=None):
-    #     resp.set_cookie('subject',name)
-    #     print("subject: ")
-    #
-    #     print(request.cookies.get('subject'))
-    # else:
-    #     print("class: ")
-    #
-    #
-    #
-
+    resp=make_response(render_template("generateSubjects.html",idsandname=classes_and_ids,query=queryname))
+    resp.set_cookie("class",name)
+    print(request.cookies.get('class'))
     return resp
 
+@index_blueprint.route('/generatechapter/<queryname>/<id>/<name>')
+def generatechapter(queryname,id,name):
+    dbhandler = databaseHandler()
+    result=dbhandler.getterWithId(queryname,id)
+    classes_and_ids = [(row[0], row[1]) for row in result]
+    #passing query name to recognize in html pages
+    resp=make_response(render_template("generateChapters.html",idsandname=classes_and_ids,query=queryname))
+    resp.set_cookie("subject",name)
+    print(request.cookies.get('subject'))
+    return resp
 
+@index_blueprint.route('/generatequestion/<queryname>',methods=['GET','POST'])
+def generatequestion(queryname):
+    #getting the list from form and concatenate "," to work with sql query.
+    question_type = str(request.form.get('question_type'))
+    selected_chapters=request.form.getlist('selected_chapters[]')
+    if(question_type=="short"):
+        question_type="S"
+    elif(question_type=="long"):
+        question_type="L"
+    else:
+        question_type="M"
+    print (question_type)
 
-@index_blueprint.route('/generatequestion/<queryname>/<id>/<type>')
-def generatequestion(queryname,id,type):
     dbhandler=databaseHandler()
-    result=dbhandler.getterWithId(queryname,id,type)
+    result=dbhandler.getterWithId(queryname,selected_chapters,question_type)
     questions=[row[1] for row in result]
-    return render_template("generatequestions.html",questions=questions)
+    clas=request.cookies.get('class')
+    subject=request.cookies.get('subject')
+    return render_template("generatequestions.html",questions=questions,clas=clas,subject=subject,type=question_type)
 
 
+# @index_blueprint.route('/submitChapter/queryname',methods=['GET','POST'])
+# def submitChapter(queryname):
+#     dbhandler=databaseHandler()
+#     result=dbhandler.getterWithId(queryname,selected_chapters)
+#     return selected_chapters
 
 @index_blueprint.route('/submitquestion',methods=['GET','POST'])
 def submitquestion():

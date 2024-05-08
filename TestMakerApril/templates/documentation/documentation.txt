@@ -1,0 +1,8 @@
+If you are on some where you see some classes or let say subjects.
+you need to understand that first the route will call.e.g 
+@index_blueprint.route('/fetchclasses') 
+or 
+@index_blueprint.route('/fetchsubject')
+
+and then its respective html will call ,e.g fetchclasses.html
+or fetchsubject.html
