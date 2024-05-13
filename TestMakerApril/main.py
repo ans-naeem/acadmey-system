@@ -7,6 +7,8 @@ print("staring")
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = 'my_test_maker'
+
     app.register_blueprint(index_blueprint)
     app.register_blueprint(auth_blueprint)
     return app

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, request
+from flask import Blueprint, render_template, url_for, request, jsonify, session
 from dao.databaseHandler import databaseHandler
 from flask import make_response
 import json
@@ -41,6 +41,7 @@ def generatesubject(queryname,id,name):
 def generatechapter(queryname,id,name):
     dbhandler = databaseHandler()
     result=dbhandler.getterWithId(queryname,id)
+    # you can make columns specified in select statement if you dont want to do this.
     classes_and_ids = [(row[0], row[1]) for row in result]
     #passing query name to recognize in html pages
     resp=make_response(render_template("generateChapters.html",idsandname=classes_and_ids,query=queryname))
@@ -53,6 +54,9 @@ def generatequestion(queryname):
     #getting the list from form and concatenate "," to work with sql query.
     question_type = str(request.form.get('question_type'))
     selected_chapters=request.form.getlist('selected_chapters[]')
+    #storing chapter ids in session for querying again when switching from short->long->mcqs
+    session['selected_chapter_ids'] = selected_chapters
+
     if(question_type=="short"):
         question_type="S"
     elif(question_type=="long"):
@@ -60,10 +64,11 @@ def generatequestion(queryname):
     else:
         question_type="M"
     print (question_type)
-
-    dbhandler=databaseHandler()
-    result=dbhandler.getterWithId(queryname,selected_chapters,question_type)
-    questions=[row[1] for row in result]
+    questions=""
+    if(selected_chapters):
+        dbhandler=databaseHandler()
+        result=dbhandler.getterWithId(queryname,selected_chapters,question_type)
+        questions=[row[1] for row in result]
     clas=request.cookies.get('class')
     subject=request.cookies.get('subject')
     return render_template("generatequestions.html",questions=questions,clas=clas,subject=subject,type=question_type)
@@ -74,6 +79,22 @@ def generatequestion(queryname):
 #     dbhandler=databaseHandler()
 #     result=dbhandler.getterWithId(queryname,selected_chapters)
 #     return selected_chapters
+@index_blueprint.route('/switchQuestionType/<type>')
+def switchQuestionType(type):
+    if (type == "short"):
+        type = "S"
+    elif (type == "long"):
+        type = "L"
+    else:
+        type = "M"
+    dbhandler = databaseHandler()
+    chapter_ids=session.get('selected_chapter_ids')
+    result=dbhandler.getterWithId('fetchQuestions',chapter_ids,type)
+    questions = [row[1] for row in result]
+    clas = request.cookies.get('class')
+    subject = request.cookies.get('subject')
+    return render_template("generatequestions.html", questions=questions, clas=clas, subject=subject,type=type)
+
 
 @index_blueprint.route('/submitquestion',methods=['GET','POST'])
 def submitquestion():
@@ -81,3 +102,11 @@ def submitquestion():
     # Process the checked questions as needed
     print(selected_questions)
     return 'Checked questions: ' + ', '.join(selected_questions)
+
+
+@index_blueprint.route('/create_section', methods=['POST'])
+def create_section():
+    # Extract selected questions from the POST request
+    selected_questions = request.json.get('selected_questions')
+    # Return a success response
+    return jsonify({'status': 'success'}), 200
