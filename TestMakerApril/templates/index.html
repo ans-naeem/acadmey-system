@@ -68,7 +68,7 @@
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
           <li>
 				{% if allowed %}
-					<a class="getstarted scrollto" href="#about">Add Questions</a>
+					<a class="getstarted scrollto" href="{{url_for('index_blueprint.addition')}}">Add Questions</a>
 				{% else %}
 					<span class="disabled "> &nbsp Add Questions</span>
 				{% endif %}

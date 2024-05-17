@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, url_for, request, jsonify, session
 from dao.databaseHandler import databaseHandler
 from flask import make_response
 import json
+from bl.utilities import fetchClasses
 index_blueprint=Blueprint('index_blueprint',__name__)
 @index_blueprint.route('/')
 def index():
@@ -10,13 +11,8 @@ def index():
 
 @index_blueprint.route('/generateclasses/<queryname>')
 def generateclasses(queryname):
-    dbhandler = databaseHandler()
-    if(queryname=="..."):
-        return"its a traiTOR"
-    result=dbhandler.getter(queryname)
-    #classes=[row[1]for row in result]
-    classes_and_ids = [(row[0], row[1]) for row in result]
-
+    result=fetchClasses(queryname)
+    classes_and_ids= [(row[0], row[1]) for row in result]
     serilized_Data=json.dumps(classes_and_ids)
     response=make_response(render_template("generateClasses.html",idsandname=classes_and_ids))
     response.set_cookie("class", '', expires=0)
@@ -110,3 +106,24 @@ def create_section():
     selected_questions = request.json.get('selected_questions')
     # Return a success response
     return jsonify({'status': 'success'}), 200
+
+@index_blueprint.route('/addition')
+def addition():
+    return render_template('addition.html')
+
+@index_blueprint.route('/get_classes', methods=['GET'])
+def get_classes():
+    queryname='fetchClasses'
+
+    classes=fetchClasses(queryname)
+    classes=  [row[1] for row in classes]
+    return jsonify(classes)
+
+@index_blueprint.route('/add_subject', methods=['POST'])
+def add_subject():
+    class_selected = request.form['class']
+    print(class_selected)
+    subject_name = request.form['subject_name']
+    # Here, you can handle the logic to add the subject to the database
+    # For this example, we'll just return a success message
+    return jsonify({'status': 'success', 'message': f'Subject "{subject_name}" added to {class_selected}'})

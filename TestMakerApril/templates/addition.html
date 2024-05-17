@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Maker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        <!-- /* Navbar style */ -->
+         .navbar { 
+             background-color: #007bff; /* Blue color */ 
+        } 
+         .navbar-brand { 
+             color: white; /* White text */ 
+             font-weight: bold; /* Bold font */
+         } 
+        <!-- /* Main content style */ -->
+        <!-- .container { -->
+            <!-- margin-top: 50px; /* Space between navbar and content */ -->
+        <!-- } -->
+         .row { 
+            cursor: pointer; /* Change cursor to pointer on hover */
+             margin-bottom: 20px; /* Space between rows */ 
+             padding: 15px; /* Padding inside rows */ -->
+             border: 1px solid #ced4da; /* Border around rows */ 
+             border-radius: 5px; /* Rounded corners */ -->
+             transition: background-color 0.3s; /* Smooth transition on hover */ 
+        <!-- } -->
+        .row:hover { 
+          background-color: #f8f9fa; /* Light gray background on hover */ 
+        } 
+    </style>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Test Maker</a>
+    </nav>
+
+    <!-- Main content -->
+    <!-- <div class="container"> -->
+        <!-- <!-- Row for adding class --> 
+        <!-- <div class="row" onclick="redirectToAdding('class')"> -->
+            <!-- <div class="col"> -->
+                <!-- Add Class -->
+            <!-- </div> -->
+        <!-- </div> -->
+
+        <!-- Row for adding subject -->
+        <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+				<div class="col-11">
+                <button id="addSubjectBtn" class="btn btn-primary">Add Subject</button>
+
+				</div>
+				<div>
+
+				</div>
+            </div>
+        </div>
+        <div class="row mt-3" id="classSelection" style="display: none;">
+            <div class="col-12">
+                <label for="classList">Select Class:</label>
+                <select id="classList" class="form-control">
+                    <option value="">Select a class</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-3" id="subjectForm" style="display: none;">
+            <div class="col-12">
+                <form id="addSubjectForm">
+                    <div class="form-group">
+                        <label for="subjectName">Subject Name:</label>
+                        <input type="text" id="subjectName" name="subject_name" class="form-control" required>
+                    </div>
+                    <input type="hidden" id="selectedClass" name="class">
+                    <button type="submit" class="btn btn-success">Save Subject</button>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="message"></div>
+            </div>
+        </div>
+    
+
+        <!-- <!-- row for adding chapter --> 
+        <div class="row" onclick="redirecttoadding('chapter')"> 
+             <div class="col"> 
+                 add chapter 
+             </div> 
+        </div> 
+
+         <!-- row for adding question --> 
+        <div class="row" onclick="redirecttoadding('question')"> 
+            <div class="col"> 
+                add question 
+            </div> 
+        </div> 
+    </div>
+
+    <!-- JavaScript to redirect to adding route -->
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#addSubjectBtn').click(function() {
+			// Clear the message div and hide it
+        $('#message').hide();
+        // Clear the subjectName input
+        $('#subjectName').val('');
+                $.ajax({
+                    url: '/get_classes',
+                    method: 'GET',
+                    success: function(data) {
+                        $('#classList').empty().append('<option value="">Select a class</option>');
+                        $.each(data, function(index, value) {
+                            $('#classList').append('<option value="' + value + '">' + value + '</option>');
+                        });
+                        $('#classSelection').show();
+                    }
+                });
+            });
+
+            $('#classList').change(function() {
+                var selectedClass = $(this).val();
+                if (selectedClass) {
+                    $('#selectedClass').val(selectedClass);
+                    $('#subjectForm').show();
+                } else {
+                    $('#subjectForm').hide();
+                }
+            });
+
+            $('#addSubjectForm').submit(function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '/add_subject',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#message').text(response.message).addClass('alert alert-success').show();
+                        $('#subjectForm').hide();
+                        $('#classSelection').hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
