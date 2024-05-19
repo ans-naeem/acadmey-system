@@ -2,12 +2,16 @@ from dao.databaseQueryHandler import databaseQueryHandler
 from dao.databaseConnection import connection
 
 class databaseHandler:
-    def inserter(self,queryname,params):
+    def inserter(self,queryname,name,id=None):
+
         dbhandler=databaseQueryHandler()
         query=getattr(dbhandler,queryname)
         conn=connection()
         cursor=conn.cursor()
-        cursor.execute(query,params)
+        if(id==None):
+            cursor.execute(query, (name,))
+        else:
+            cursor.execute(query,(name,id,))
         conn.commit()
         cursor.close()
         conn.close()

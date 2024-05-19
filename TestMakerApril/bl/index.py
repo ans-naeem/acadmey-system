@@ -116,14 +116,27 @@ def get_classes():
     queryname='fetchClasses'
 
     classes=fetchClasses(queryname)
-    classes=  [row[1] for row in classes]
+    classes = [{'id': row[0], 'name': row[1]} for row in classes]
     return jsonify(classes)
 
 @index_blueprint.route('/add_subject', methods=['POST'])
 def add_subject():
-    class_selected = request.form['class']
-    print(class_selected)
-    subject_name = request.form['subject_name']
-    # Here, you can handle the logic to add the subject to the database
-    # For this example, we'll just return a success message
-    return jsonify({'status': 'success', 'message': f'Subject "{subject_name}" added to {class_selected}'})
+    try:
+        class_selected = request.form['class']
+        print(class_selected)
+        subject_name = request.form['subject_name']
+        dbhandler=databaseHandler()
+        dbhandler.inserter("insertSubject",subject_name,class_selected)
+        return jsonify({'status': 'success', 'message': f'Subject "{subject_name}" added to {class_selected}'})
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"Subject cant be added!!"})
+
+@index_blueprint.route('/add_class',methods=['POST'])
+def add_class():
+    try:
+        class_name = request.form['class_name']
+        dbhandler=databaseHandler()
+        dbhandler.inserter("insertClass",class_name)
+        return jsonify({'status': 'success', 'message': f'Subject "{class_name}" added!!'})
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"class cant be added!!"})

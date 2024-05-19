@@ -39,21 +39,43 @@
         <a class="navbar-brand" href="#">Test Maker</a>
     </nav>
 
-    <!-- Main content -->
-    <!-- <div class="container"> -->
-        <!-- <!-- Row for adding class --> 
-        <!-- <div class="row" onclick="redirectToAdding('class')"> -->
-            <!-- <div class="col"> -->
-                <!-- Add Class -->
-            <!-- </div> -->
-        <!-- </div> -->
+    <!-- row for adding class -->
+	<div class="container mt-5">
 
+		<div class="row">
+			<div class="col-12">
+				<div class="col-11">
+
+					<button id="addClasstBtn" class="btn btn-primary" style="width:90px;">Add Class</button>
+				</div>
+			</div>
+		</div>
+		
+        <div class="row mt-3" id="classForm" style="display: none;">
+            <div class="col-12">
+                <form id="addClassForm">
+                    <div class="form-group">
+                        <label for="className">Class Name:</label>
+                        <input type="text" id="className" name="class_name" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Class</button>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="messageforclass"></div>
+            </div>
+        </div>
+	</div>
+	
+	
         <!-- Row for adding subject -->
-        <div class="container mt-5">
+    <div class="container mt-5">
         <div class="row">
             <div class="col-12">
 				<div class="col-11">
-                <button id="addSubjectBtn" class="btn btn-primary">Add Subject</button>
+                <button id="addSubjectBtn" class="btn btn-primary" style="width:90px;">Add Subject</button>
 
 				</div>
 				<div>
@@ -83,10 +105,11 @@
         </div>
         <div class="row mt-3">
             <div class="col-12">
-                <div id="message"></div>
+                <div id="messageforsubject"></div>
             </div>
         </div>
-    
+    </div>
+
 
         <!-- <!-- row for adding chapter --> 
         <div class="row" onclick="redirecttoadding('chapter')"> 
@@ -101,16 +124,46 @@
                 add question 
             </div> 
         </div> 
-    </div>
 
     <!-- JavaScript to redirect to adding route -->
    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
+	$(document).ready(function() {
+            $('#addClasstBtn').click(function() {
+				// Clear the messageforsubject div and hide it
+			$('#messageforclass').hide();
+			$('#className').val('');
+			$('#classForm').show();
+
+        });
+		$('#addClassForm').submit(function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '/add_class',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                    if (response.status === 'success') {
+                    $('#messageforclass').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
+                    $('#classForm').hide();
+                    $('#classSelection').hide();
+                } else {
+                    $('#messageforclass').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+                }
+            },
+            error: function() {
+                $('#messageforclass').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+            }
+                });
+            });
+			
+	});
         $(document).ready(function() {
             $('#addSubjectBtn').click(function() {
-			// Clear the message div and hide it
-        $('#message').hide();
+			// Clear the messageforsubject div and hide it
+        $('#messageforsubject').hide();
         // Clear the subjectName input
         $('#subjectName').val('');
                 $.ajax({
@@ -119,7 +172,7 @@
                     success: function(data) {
                         $('#classList').empty().append('<option value="">Select a class</option>');
                         $.each(data, function(index, value) {
-                            $('#classList').append('<option value="' + value + '">' + value + '</option>');
+                            $('#classList').append('<option value="' + value.id + '">' + value.name + '</option>');
                         });
                         $('#classSelection').show();
                     }
@@ -144,10 +197,17 @@
                     method: 'POST',
                     data: formData,
                     success: function(response) {
-                        $('#message').text(response.message).addClass('alert alert-success').show();
-                        $('#subjectForm').hide();
-                        $('#classSelection').hide();
-                    }
+                    if (response.status === 'success') {
+                    $('#messageforsubject').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
+                    $('#subjectForm').hide();
+                    $('#classSelection').hide();
+                } else {
+                    $('#messageforsubject').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+                }
+            },
+            error: function() {
+                $('#messageforsubject').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+            }
                 });
             });
         });
