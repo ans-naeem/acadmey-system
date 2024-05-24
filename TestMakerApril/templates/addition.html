@@ -112,11 +112,54 @@
 
 
         <!-- <!-- row for adding chapter --> 
-        <div class="row" onclick="redirecttoadding('chapter')"> 
-             <div class="col"> 
-                 add chapter 
-             </div> 
-        </div> 
+         <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+				<div class="col-11">
+					<button id="addChapterBtn" class="btn btn-primary" style="width:90px;">Add chapter</button>
+				</div>
+				
+            </div>
+        </div>
+        <div class="row mt-3" id="classSelectionForChapter" style="display: none;">
+            <div class="col-12">
+                <label for="classListForChapter">Select Class:</label>
+                <select id="classListForChapter" class="form-control">
+                    <option value="">Select a class</option>
+                </select>
+            </div>
+        </div>
+		<div class="row mt-3" id="subjectSelectionForChapter" style="display: none;">
+            <div class="col-12">
+                <label for="subjectListForChapter">Select Subject:</label>
+                <select id="subjectListForChapter" class="form-control">
+                    <option value="">Select a Subject</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-3" id="chapterForm" style="display: none;">
+            <div class="col-12">
+                <form id="addChapterForm">
+                    <div class="form-group">
+                        <label for="chapterNo">Chapter Number:</label>
+                        <input type="text" id="chapterNo" name="chapter_no" class="form-control" required>
+                        <label for="chapterName">Chapter Name:</label>
+                        <input type="text" id="chapterName" name="chapter_name" class="form-control" required>
+                    
+					</div>
+                    <input type="hidden" id="selectedClassForChapter" name="class">
+                    <input type="hidden" id="selectedSubjectForChapter" name="subject">
+                    <button type="submit" class="btn btn-success">Save Subject</button>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="messageforchapter"></div>
+            </div>
+        </div>
+    </div>
+
 
          <!-- row for adding question --> 
         <div class="row" onclick="redirecttoadding('question')"> 
@@ -131,10 +174,19 @@
     <script>
 	$(document).ready(function() {
             $('#addClasstBtn').click(function() {
-				// Clear the messageforsubject div and hide it
-			$('#messageforclass').hide();
-			$('#className').val('');
-			$('#classForm').show();
+			if ($('#classForm').is(':hidden')) {
+					// Clear the messageforsubject div and hide it
+				$('#messageforclass').hide();
+				$('#messageforsubject').hide();
+				$('#subjectForm').hide();
+				$('#classSelection').hide();
+
+				$('#className').val('');
+				$('#classForm').show();
+			} else {
+				$('#classForm').hide();
+
+			}
 
         });
 		$('#addClassForm').submit(function(event) {
@@ -160,57 +212,159 @@
             });
 			
 	});
-        $(document).ready(function() {
-            $('#addSubjectBtn').click(function() {
-			// Clear the messageforsubject div and hide it
-        $('#messageforsubject').hide();
-        // Clear the subjectName input
-        $('#subjectName').val('');
-                $.ajax({
-                    url: '/get_classes',
-                    method: 'GET',
-                    success: function(data) {
-                        $('#classList').empty().append('<option value="">Select a class</option>');
-                        $.each(data, function(index, value) {
-                            $('#classList').append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                        $('#classSelection').show();
-                    }
-                });
-            });
+	$(document).ready(function() {
+		$('#addSubjectBtn').click(function() {
+		if ($('#subjectForm').is(':hidden') && $('#classSelection').is(':hidden')) {
 
-            $('#classList').change(function() {
-                var selectedClass = $(this).val();
-                if (selectedClass) {
-                    $('#selectedClass').val(selectedClass);
-                    $('#subjectForm').show();
-                } else {
-                    $('#subjectForm').hide();
+			// Clear the messageforsubject div and hide it
+			$('#messageforclass').hide();
+			$('#classForm').hide();
+			$('#messageforsubject').hide();
+			// Clear the subjectName input
+			$('#subjectName').val('');
+				$.ajax({
+					url: '/get_classes',
+					method: 'GET',
+					success: function(data) {
+						$('#classList').empty().append('<option value="">Select a class</option>');
+						$.each(data, function(index, value) {
+							$('#classList').append('<option value="' + value.id + '">' + value.name + '</option>');
+						});
+						$('#classSelection').show();
+					}
+				});
+			} else{
+					$('#subjectForm').hide();
+					$('#classSelection').hide();
+
+
+			}
+		});
+
+		$('#classList').change(function() {
+			var selectedClass = $(this).val();
+			if (selectedClass) {
+				$('#selectedClass').val(selectedClass);
+				$('#subjectForm').show();
+			} else {
+				$('#subjectForm').hide();
+			}
+		});
+
+		$('#addSubjectForm').submit(function(event) {
+			event.preventDefault();
+			var formData = $(this).serialize();
+			$.ajax({
+				url: '/add_subject',
+				method: 'POST',
+				data: formData,
+				success: function(response) {
+				if (response.status === 'success') {
+				$('#messageforsubject').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
+				$('#subjectForm').hide();
+				$('#classSelection').hide();
+			} else {
+				$('#messageforsubject').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+			}
+		},
+		error: function() {
+			$('#messageforsubject').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+		}
+			});
+		});
+	});
+	$(document).ready(function() {
+    $('#addChapterBtn').click(function() {
+        if ($('#chapterForm').is(':hidden') && $('#classSelectionForChapter').is(':hidden') && $('#subjectSelectionForChapter').is(':hidden')) {
+            // Clear the message divs and hide them
+            $('#messageforclass').hide();
+            $('#classForm').hide();
+            $('#messageforsubject').hide();
+            $('#subjectForm').hide();
+            $('#classSelection').hide();
+            
+            // Clear the chapterName input
+            $('#chapterName').val('');
+            
+            $.ajax({
+                url: '/get_classes',
+                method: 'GET',
+                success: function(data) {
+                    $('#classListForChapter').empty().append('<option value="">Select a class</option>');
+                    $.each(data, function(index, value) {
+                        $('#classListForChapter').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                    $('#classSelectionForChapter').show();
                 }
             });
+        } else {
+            $('#classForm').hide();
+            $('#subjectForm').hide();
+            $('#chapterForm').hide();
+            $('#classSelectionForChapter').hide();
+            $('#subjectSelectionForChapter').hide();
+        }
+    });
 
-            $('#addSubjectForm').submit(function(event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: '/add_subject',
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                    if (response.status === 'success') {
-                    $('#messageforsubject').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
-                    $('#subjectForm').hide();
-                    $('#classSelection').hide();
+    $('#classListForChapter').change(function() {
+	    
+
+        var selectedClass = $(this).val();
+        if (selectedClass) {
+            $('#selectedClassForChapter').val(selectedClass);
+            $.ajax({
+                url: '/get_subjects/' + selectedClass,  // Updated to use path parameter
+                method: 'GET',
+                data: { classId: selectedClass },
+                success: function(data) {
+
+                    $('#subjectListForChapter').empty().append('<option value="">Select a subject</option>');
+                    $.each(data, function(index, value) {
+                        $('#subjectListForChapter').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });	
+					$('#classSelectionForChapter').hide();
+                    $('#subjectSelectionForChapter').show();
+                }
+            });
+        } else {
+            $('#subjectSelectionForChapter').hide();
+        }
+    });
+
+    $('#subjectListForChapter').change(function() {
+        var selectedSubject = $(this).val();
+        if (selectedSubject) {
+            $('#selectedSubjectForChapter').val(selectedSubject);
+            $('#chapterForm').show();
+        } else {
+            $('#chapterForm').hide();
+        }
+    });
+
+    $('#addChapterForm').submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: '/add_chapter',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#messageforchapter').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
+                    $('#chapterForm').hide();
+                    $('#subjectSelectionForChapter').hide();
                 } else {
-                    $('#messageforsubject').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+                    $('#messageforchapter').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
                 }
             },
             error: function() {
-                $('#messageforsubject').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+                $('#messageforchapter').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
             }
-                });
-            });
         });
+    });
+});
+
+		
     </script>
 </body>
 </html>

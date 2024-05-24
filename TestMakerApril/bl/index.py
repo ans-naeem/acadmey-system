@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, url_for, request, jsonify, session
 from dao.databaseHandler import databaseHandler
 from flask import make_response
 import json
-from bl.utilities import fetchClasses
+from bl.utilities import utilities
+
 index_blueprint=Blueprint('index_blueprint',__name__)
 @index_blueprint.route('/')
 def index():
@@ -11,7 +12,7 @@ def index():
 
 @index_blueprint.route('/generateclasses/<queryname>')
 def generateclasses(queryname):
-    result=fetchClasses(queryname)
+    result=utilities.fetchClasses(queryname)
     classes_and_ids= [(row[0], row[1]) for row in result]
     serilized_Data=json.dumps(classes_and_ids)
     response=make_response(render_template("generateClasses.html",idsandname=classes_and_ids))
@@ -115,9 +116,19 @@ def addition():
 def get_classes():
     queryname='fetchClasses'
 
-    classes=fetchClasses(queryname)
+    classes=utilities.fetchClasses(queryname)
     classes = [{'id': row[0], 'name': row[1]} for row in classes]
     return jsonify(classes)
+@index_blueprint.route('/get_subjects/<int:classid>', methods=['GET'])
+def get_subjects(classid):
+    try:
+        queryname='fetchSubjects'
+        print("fetching subjects")
+        subjects=utilities.fetchSubjects(queryname,classid)
+        subjects = [{'id': row[0], 'name': row[1]} for row in subjects]
+        return jsonify(subjects)
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"subject cant be fetched!!"})
 
 @index_blueprint.route('/add_subject', methods=['POST'])
 def add_subject():
@@ -140,3 +151,18 @@ def add_class():
         return jsonify({'status': 'success', 'message': f'Subject "{class_name}" added!!'})
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"class cant be added!!"})
+
+@index_blueprint.route('/add_chapter', methods=['POST'])
+def add_chapter():
+    try:
+        class_selected = request.form['class']
+        subject_selected=request.form['subject']
+        print(class_selected+","+subject_selected)
+        chapter_no = request.form['chapter_no']
+
+        chapter_name = request.form['chapter_name']
+        dbhandler=databaseHandler()
+        dbhandler.inserter("insertChapter",chapter_name,subject_selected,chapter_no)
+        return jsonify({'status': 'success', 'message': f'chapter {chapter_name} added to {class_selected} {subject_selected}'})
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"Chapter cant be added!!"})
