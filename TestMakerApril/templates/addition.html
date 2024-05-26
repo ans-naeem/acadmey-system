@@ -162,11 +162,78 @@
 
 
          <!-- row for adding question --> 
-        <div class="row" onclick="redirecttoadding('question')"> 
-            <div class="col"> 
-                add question 
-            </div> 
-        </div> 
+        <
+         <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+				<div class="col-11">
+					<button id="addQuestionBtn" class="btn btn-primary" style="width:90px;">Add Question</button>
+				</div>
+				
+            </div>
+        </div>
+        <div class="row mt-3" id="classSelectionForQuestion" style="display: none;">
+            <div class="col-12">
+                <label for="classListForQuestion">Select Class:</label>
+                <select id="classListForQuestion" class="form-control">
+                    <option value="">Select a class</option>
+                </select>
+            </div>
+        </div>
+		<div class="row mt-3" id="subjectSelectionForQuestion" style="display: none;">
+            <div class="col-12">
+                <label for="subjectListForQuestion">Select Subject:</label>
+                <select id="subjectListForQuestion" class="form-control">
+                    <option value="">Select a Subject</option>
+                </select>
+            </div>
+        </div>
+		<div class="row mt-3" id="chaptertSelectionForQuestion" style="display: none;">
+            <div class="col-12">
+                <label for="chapterListForQuestion">Select Chapter:</label>
+                <select id="chapterListForQuestion" class="form-control">
+                    <option value="">Select a Chapter</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-3" id="questionForm" style="display: none;">
+            <div class="col-12">
+                <form id="addQuestionForm">
+                    <div class="form-group">
+                        <label for="questionDescription">Question Description:</label>
+                        <textarea id="questionDescription" name="question_description" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionType">Question Type:</label>
+                        <div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_type" id="typeShort" value="Short" required>
+                                <label class="form-check-label" for="typeShort">Short</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_type" id="typeLong" value="Long">
+                                <label class="form-check-label" for="typeLong">Long</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_type" id="typeMCQS" value="MCQS">
+                                <label class="form-check-label" for="typeMCQS">MCQS</label>
+                            </div>
+                        </div>
+                    </div>
+					<input type="hidden" id="selectedClassForQuestion" name="class">
+                    <input type="hidden" id="selectedSubjectForQuestion" name="subject">
+                    <input type="hidden" id="selectedChapterForQuestion" name="chapter">
+                    <button type="submit" class="btn btn-success">Save Question</button>
+                </form>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="messageforquestion"></div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- JavaScript to redirect to adding route -->
    
@@ -363,6 +430,130 @@
         });
     });
 });
+
+    $(document).ready(function() {
+    $('#addQuestionBtn').click(function() {
+        if ($('#questionForm').is(':hidden')&& $('#chaptertSelectionForQuestion').is(':hidden') && $('#classSelectionForQuestion').is(':hidden') && $('#subjectSelectionForQuestion').is(':hidden')) {
+            // Clear the message divs and hide them
+            $('#messageforclass').hide();
+            $('#classForm').hide();
+            $('#messageforsubject').hide();
+            $('#subjectForm').hide();
+            $('#classSelection').hide();
+			$('#chapterForm').hide();
+			$('#subjectSelectionForChapter').hide();
+			$('#classSelectionForChapter').hide();
+            // Clear the chapterName input            
+            $.ajax({
+                url: '/get_classes',
+                method: 'GET',
+                success: function(data) {
+                    $('#classListForQuestion').empty().append('<option value="">Select a class</option>');
+                    $.each(data, function(index, value) {
+                        $('#classListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                    $('#classSelectionForQuestion').show();
+                }
+            });
+        } else {
+            $('#classForm').hide();
+            $('#subjectForm').hide();
+            $('#chapterForm').hide();
+            $('#classSelectionForChapter').hide();
+            $('#subjectSelectionForChapter').hide();
+            $('#classSelectionForQuestion').hide();
+            $('#subjectSelectionForQuestion').hide();
+            $('#chaptertSelectionForQuestion').hide();
+			
+			
+        }
+    });
+
+    $('#classListForQuestion').change(function() {
+	    
+
+        var selectedClass = $(this).val();
+        if (selectedClass) {
+            $('#selectedClassForQuestion').val(selectedClass);
+            $.ajax({
+                url: '/get_subjects/' + selectedClass,  // Updated to use path parameter
+                method: 'GET',
+                data: { classId: selectedClass },
+                success: function(data) {
+
+                    $('#subjectListForQuestion').empty().append('<option value="">Select a subject</option>');
+                    $.each(data, function(index, value) {
+                        $('#subjectListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });	
+					$('#classSelectionForQuestion').hide();
+                    $('#subjectSelectionForQuestion').show();
+                }
+            });
+        } else {
+            $('#subjectSelectionForQuestion').hide();
+        }
+    });
+	
+	$('#subjectListForQuestion').change(function() {
+	    
+
+        var selectedSubject = $(this).val();
+        if (selectedSubject) {
+            $('#selectedSubjectForQuestion').val(selectedSubject);
+            $.ajax({
+                url: '/get_chapters/' + selectedSubject,  // Updated to use path parameter
+                method: 'GET',
+                data: { classId: selectedSubject },
+                success: function(data) {
+
+                    $('#chapterListForQuestion').empty().append('<option value="">Select a subject</option>');
+                    $.each(data, function(index, value) {
+                        $('#chapterListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });	
+					$('#subjectSelectionForQuestion').hide();
+                    $('#chaptertSelectionForQuestion').show();
+                }
+            });
+        } else {
+            $('#chaptertSelectionForQuestion').hide();
+        }
+    });
+
+    $('#chapterListForQuestion').change(function() {
+        var selectedChapter = $(this).val();
+        if (selectedChapter) {
+            $('#selectedChapterForQuestion').val(selectedChapter);
+            $('#questionForm').show();
+        } else {
+            $('#questionForm').hide();
+        }
+    });
+
+    $('#addQuestionForm').submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            url: '/add_question',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#messageforquestion').text(response.message).removeClass('alert-danger').addClass('alert alert-success').show();
+                    $('#questionForm').hide();
+                    $('#chapterSelectionForQuestion').hide();
+                } else {
+                    $('#messageforchapter').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+                }
+            },
+            error: function() {
+                $('#messageforchapter').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+            }
+        });
+    });
+});
+
+		
+
 
 		
     </script>

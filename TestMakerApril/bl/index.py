@@ -130,6 +130,17 @@ def get_subjects(classid):
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"subject cant be fetched!!"})
 
+@index_blueprint.route('/get_chapters/<int:subjectid>',methods=['GET'])
+def get_chapters(subjectid):
+    try:
+        queryname='fetchChapters'
+        print("fetching Chapters")
+        chapters=utilities.fetchChapters(queryname,subjectid)
+        chapters = [{'id': row[0], 'name': row[1]} for row in chapters]
+        return jsonify(chapters)
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"subject cant be fetched!!"})
+
 @index_blueprint.route('/add_subject', methods=['POST'])
 def add_subject():
     try:
@@ -166,3 +177,20 @@ def add_chapter():
         return jsonify({'status': 'success', 'message': f'chapter {chapter_name} added to {class_selected} {subject_selected}'})
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"Chapter cant be added!!"})
+
+@index_blueprint.route('/add_question',methods=['POST'])
+def add_question():
+    try:
+        class_selected = request.form['class']
+        subject_selected = request.form['subject']
+        chapter_selected=request.form['chapter']
+        print("going to add question")
+        question_desc = request.form['question_description']
+
+        question_type = request.form['question_type']
+        dbhander=databaseHandler()
+        dbhander.inserter("insertQuestion",question_desc,chapter_selected,question_type)
+        return jsonify({'status': 'success', 'message': f'Question added to {chapter_selected} '})
+
+    except Exception as e:
+        return jsonify({'status': 'failure', 'message': f"Question cant be added!!"})

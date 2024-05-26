@@ -13,6 +13,8 @@ class databaseHandler:
         elif(number==None and id != None):
             cursor.execute(query,(name,id,))
         else:
+            # in adding question case this number will be used as type.
+            #we will pass the type of a question as a third parameter.
             cursor.execute(query,(name,id,number,))
         conn.commit()
         cursor.close()

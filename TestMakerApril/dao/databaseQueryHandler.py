@@ -1,6 +1,7 @@
 class databaseQueryHandler:
     insertChapter="INSERT INTO `test_maker`.`chapter` (`chap_name`, `subject_id`, `chapter_number`) VALUES (%s,%s,%s);"
-    insertQuestion=""
+    insertQuestion="INSERT INTO `test_maker`.`question` (`question_desc`, `chapter_id`, `question_type`) VALUES (%s,%s,%s);"
+
     insertTranslation=""
     insertTest=""
     insertSubject="INSERT INTO `test_maker`.`subject` (`subject_name`, `class_id`) VALUES (%s,%s);"

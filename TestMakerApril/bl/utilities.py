@@ -13,3 +13,11 @@ class utilities:
         result = dbhandler.getterWithId(queryname,chapid)
         # classes=[row[1]for row in result]
         return result
+
+
+    def fetchChapters(queryname,subjectid):
+        dbhandler = databaseHandler()
+        result = dbhandler.getterWithId(queryname, subjectid)
+        # classes=[row[1]for row in result]
+        return result
+
