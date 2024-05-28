@@ -20,6 +20,17 @@ class databaseHandler:
         cursor.close()
         conn.close()
 
+    def insertMcqs(self,queryname,chapid,ques_Desc,option_a,option_b,option_c,option_d):
+        dbhandler = databaseQueryHandler()
+        query = getattr(dbhandler, queryname)
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute(query,(ques_Desc,option_a,option_b,option_c,option_d,chapid,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
 #this functionality not been implemented yet as its logic seems rough and tough right now
 
     def updater(self,tableName,params):

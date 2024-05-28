@@ -6,3 +6,5 @@ or
 
 and then its respective html will call ,e.g fetchclasses.html
 or fetchsubject.html
+
+ 

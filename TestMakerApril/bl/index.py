@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, jsonify, session
+
+from bl.PDFGenerator import PDFGenerator
 from dao.databaseHandler import databaseHandler
 from flask import make_response
 import json
@@ -97,6 +99,10 @@ def switchQuestionType(type):
 def submitquestion():
     selected_questions = request.form.getlist('selected_questions[]')
     # Process the checked questions as needed
+    name = request.cookies.get('username')
+
+    pdf=PDFGenerator(name)
+    pdf.generate_pdf(selected_questions)
     print(selected_questions)
     return 'Checked questions: ' + ', '.join(selected_questions)
 
@@ -186,11 +192,27 @@ def add_question():
         chapter_selected=request.form['chapter']
         print("going to add question")
         question_desc = request.form['question_description']
+        option_A = request.form['option_A']
+        option_B = request.form['option_B']
+        option_C = request.form['option_C']
+        option_D = request.form['option_D']
 
         question_type = request.form['question_type']
-        dbhander=databaseHandler()
-        dbhander.inserter("insertQuestion",question_desc,chapter_selected,question_type)
-        return jsonify({'status': 'success', 'message': f'Question added to {chapter_selected} '})
+        if question_type=="Short":
+            question_type="S"
+        elif question_type=="Long":
+            question_type="L"
+        elif question_type=="MCQS":
+            question_type="M"
+
+        if question_type=="M":
+            dbhandler=databaseHandler()
+            dbhandler.insertMcqs("insertMcqs",chapter_selected,question_desc,option_A,option_B,option_C,option_D)
+            return jsonify({'status': 'success', 'message': f'MCQS added to {chapter_selected} '})
+        else:
+            dbhander=databaseHandler()
+            dbhander.inserter("insertQuestion",question_desc,chapter_selected,question_type)
+            return jsonify({'status': 'success', 'message': f'Question added to {chapter_selected} '})
 
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"Question cant be added!!"})

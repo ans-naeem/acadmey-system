@@ -1,5 +1,7 @@
 from dao.databaseHandler import databaseHandler
 
+
+
 class utilities:
     def fetchClasses(queryname):
         dbhandler = databaseHandler()
@@ -20,4 +22,3 @@ class utilities:
         result = dbhandler.getterWithId(queryname, subjectid)
         # classes=[row[1]for row in result]
         return result
-

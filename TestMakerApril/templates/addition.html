@@ -203,9 +203,27 @@
                         <label for="questionDescription">Question Description:</label>
                         <textarea id="questionDescription" name="question_description" class="form-control" required></textarea>
                     </div>
+					<div>
+					Please note that in case of Short and Long questions following options fields do not require to be filled.
+					</div>
+					<div class="form-group">
+                        <label for="optionA">Option A:</label>
+                        <textarea id="optionA" name="option_A" class="form-control" ></textarea>
+                    </div>
+					<div class="form-group">
+                        <label for="optionB">Option B:</label>
+                        <textarea id="optionB" name="option_B" class="form-control" ></textarea>
+                    </div><div class="form-group">
+                        <label for="optionC">Option C:</label>
+                        <textarea id="optionC" name="option_C" class="form-control" ></textarea>
+                    </div><div class="form-group">
+                        <label for="optionD">Option D:</label>
+                        <textarea id="optionD" name="option_D" class="form-control" ></textarea>
+                    </div>
                     <div class="form-group">
                         <label for="questionType">Question Type:</label>
                         <div>
+						
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="question_type" id="typeShort" value="Short" required>
                                 <label class="form-check-label" for="typeShort">Short</label>
@@ -245,8 +263,19 @@
 					// Clear the messageforsubject div and hide it
 				$('#messageforclass').hide();
 				$('#messageforsubject').hide();
+				$('#messageforchapter').hide();
+				$('#messageforquestion').hide();
+				
 				$('#subjectForm').hide();
+				$('#chapterForm').hide();
+				$('#questionForm').hide();
+				
 				$('#classSelection').hide();
+				$('#subjectSelectionForQuestion').hide()
+				$('#classSelectionForQuestion').hide()
+				$('#subjectSelectionForchapter').hide()
+				
+				$('#chapterSelectionForquestion').hide()
 
 				$('#className').val('');
 				$('#classForm').show();
@@ -347,6 +376,7 @@
             $('#messageforclass').hide();
             $('#classForm').hide();
             $('#messageforsubject').hide();
+			
             $('#subjectForm').hide();
             $('#classSelection').hide();
             
@@ -443,6 +473,9 @@
 			$('#chapterForm').hide();
 			$('#subjectSelectionForChapter').hide();
 			$('#classSelectionForChapter').hide();
+			$('#messageforchapter').hide();
+			$('#messageforquestion').hide();
+			 
             // Clear the chapterName input            
             $.ajax({
                 url: '/get_classes',
@@ -457,6 +490,8 @@
             });
         } else {
             $('#classForm').hide();
+			$('#questionForm').hide();
+
             $('#subjectForm').hide();
             $('#chapterForm').hide();
             $('#classSelectionForChapter').hide();
@@ -465,6 +500,12 @@
             $('#subjectSelectionForQuestion').hide();
             $('#chaptertSelectionForQuestion').hide();
 			
+			$('#messageforquestion').hide();
+			$('#messageforchapter').hide();
+			$('#messageforsubject').hide();
+			$('#messageforclass').hide();
+			
+
 			
         }
     });
@@ -506,7 +547,7 @@
                 data: { classId: selectedSubject },
                 success: function(data) {
 
-                    $('#chapterListForQuestion').empty().append('<option value="">Select a subject</option>');
+                    $('#chapterListForQuestion').empty().append('<option value="">Select a chapter</option>');
                     $.each(data, function(index, value) {
                         $('#chapterListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });	
@@ -542,11 +583,11 @@
                     $('#questionForm').hide();
                     $('#chapterSelectionForQuestion').hide();
                 } else {
-                    $('#messageforchapter').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
+                    $('#messageforquestion').text(response.message).removeClass('alert-success').addClass('alert alert-danger').show();
                 }
             },
             error: function() {
-                $('#messageforchapter').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
+                $('#messageforquestion').text('An error occurred while processing your request.').removeClass('alert-success').addClass('alert alert-danger').show();
             }
         });
     });
