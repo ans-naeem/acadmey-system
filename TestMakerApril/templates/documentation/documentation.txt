@@ -7,4 +7,20 @@ or
 and then its respective html will call ,e.g fetchclasses.html
 or fetchsubject.html
 
+While generating Test
+--------------------
+A.our approch is to ask user to select the class first.
+B.after selecting class user should select subject.
+
+There is a little change in database that every subject has its respective question type
+
+****************************** Change in ERD ***********************************
+			subject -----subject_type-----questionType
+1 subject has many subjecttype but 1 subjecttype belongs to only 1 subject.
+---------------------------------------------------------------------------------
+
+C.after selecting subject we should ask display the question types 
+
+From that question type if user select ESSAYS then all the essay of that subject will be displayed.
+
  

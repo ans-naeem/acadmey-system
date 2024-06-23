@@ -2,6 +2,7 @@ from dao.databaseConnection import connection
 from dao.databaseQueryHandler import databaseQueryHandler
 from bl.auth import auth as auth_blueprint
 from bl.index import index_blueprint as index_blueprint
+from bl.viewsAfterSelectingSubject import views_blueprint as views_blueprint
 from flask import Flask
 print("staring")
 
@@ -11,6 +12,7 @@ def create_app():
 
     app.register_blueprint(index_blueprint)
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(views_blueprint)
     return app
 
 if __name__=='__main__':

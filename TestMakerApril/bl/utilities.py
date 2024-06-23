@@ -22,3 +22,13 @@ class utilities:
         result = dbhandler.getterWithId(queryname, subjectid)
         # classes=[row[1]for row in result]
         return result
+
+    def fetcherWithId(queryname,id):
+        dbhandler=databaseHandler()
+        result=dbhandler.getterWithId(queryname,id)
+        return result
+
+    def fetcherWithoutId(queryname):
+        dbhandler=databaseHandler()
+        result=dbhandler.getter(queryname)
+        return result

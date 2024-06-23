@@ -6,6 +6,10 @@
     <title>Test Maker</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
     <!-- Custom CSS -->
     <style>
         <!-- /* Navbar style */ -->
@@ -38,6 +42,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <a class="navbar-brand" href="#">Test Maker</a>
     </nav>
+	<!-- ---------------------------------------------------------------------CLASS-------------------------------------------------------------- -->
 
     <!-- row for adding class -->
 	<div class="container mt-5">
@@ -69,7 +74,7 @@
         </div>
 	</div>
 	
-	
+	<!-- ---------------------------------------------------------------------SUBJECT-------------------------------------------------------------- -->
         <!-- Row for adding subject -->
     <div class="container mt-5">
         <div class="row">
@@ -94,13 +99,17 @@
         <div class="row mt-3" id="subjectForm" style="display: none;">
             <div class="col-12">
                 <form id="addSubjectForm">
-                    <div class="form-group">
-                        <label for="subjectName">Subject Name:</label>
-                        <input type="text" id="subjectName" name="subject_name" class="form-control" required>
-                    </div>
-                    <input type="hidden" id="selectedClass" name="class">
-                    <button type="submit" class="btn btn-success">Save Subject</button>
-                </form>
+					<div class="form-group">
+						<label for="subjectName">Subject Name:</label>
+						<input type="text" id="subjectName" name="subject_name" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label for="subjectQuestionTypes">Select Question Types:</label>
+						<select id="subjectQuestionTypes" name="subjectQuestionTypes[]" class="form-control" multiple required></select>
+					</div>
+					<input type="hidden" id="selectedClass" name="class">
+					<button type="submit" class="btn btn-success">Save Subject</button>
+				</form>
             </div>
         </div>
         <div class="row mt-3">
@@ -110,6 +119,7 @@
         </div>
     </div>
 
+	<!-- ---------------------------------------------------------------------CHAPTER-------------------------------------------------------------- -->
 
         <!-- <!-- row for adding chapter --> 
          <div class="container mt-5">
@@ -160,6 +170,7 @@
         </div>
     </div>
 
+	<!-- ---------------------------------------------------------------------QUESTION-------------------------------------------------------------- -->
 
          <!-- row for adding question --> 
         <
@@ -315,6 +326,17 @@
 			// Clear the messageforsubject div and hide it
 			$('#messageforclass').hide();
 			$('#classForm').hide();
+			$('#chapterForm').hide();
+			$('#questionForm').hide();
+			$('#classSelection').hide();
+			$('#subjectSelectionForQuestion').hide()
+			$('#subjectSelectionForchapter').hide()
+			$('#classSelectionForQuestion').hide()
+			$('#chapterSelectionForquestion').hide()
+			$('#classSelectionForChapter').hide();
+
+
+
 			$('#messageforsubject').hide();
 			// Clear the subjectName input
 			$('#subjectName').val('');
@@ -341,6 +363,19 @@
 			var selectedClass = $(this).val();
 			if (selectedClass) {
 				$('#selectedClass').val(selectedClass);
+				
+				$.ajax({
+					url: '/get_subject_question_types',
+					method: 'GET',
+					success: function(data) {
+						$('#subjectQuestionTypes').empty().append('<option value="">Select a question types for the following subject</option>');
+						$.each(data, function(index, value) {
+							$('#subjectQuestionTypes').append('<option value="' + value.id + '">' + value.name + '</option>');
+						});
+						$('#subjectQuestionTypes').show();
+					}
+				});
+				
 				$('#subjectForm').show();
 			} else {
 				$('#subjectForm').hide();
@@ -369,6 +404,8 @@
 			});
 		});
 	});
+	
+	
 	$(document).ready(function() {
     $('#addChapterBtn').click(function() {
         if ($('#chapterForm').is(':hidden') && $('#classSelectionForChapter').is(':hidden') && $('#subjectSelectionForChapter').is(':hidden')) {

@@ -125,6 +125,15 @@ def get_classes():
     classes=utilities.fetchClasses(queryname)
     classes = [{'id': row[0], 'name': row[1]} for row in classes]
     return jsonify(classes)
+
+@index_blueprint.route('/get_subject_question_types',methods=['GET'])
+def get_subject_question_types():
+    queryname='fetchQuestionTypes'
+    result=utilities.fetcherWithoutId(queryname)
+    subjectQuestionType = [{'id': row[0], 'name': row[1]} for row in result]
+    return jsonify(subjectQuestionType)
+
+
 @index_blueprint.route('/get_subjects/<int:classid>', methods=['GET'])
 def get_subjects(classid):
     try:
@@ -153,8 +162,27 @@ def add_subject():
         class_selected = request.form['class']
         print(class_selected)
         subject_name = request.form['subject_name']
+        question_types = request.form.getlist('subjectQuestionTypes[]')
+        print(question_types)
         dbhandler=databaseHandler()
         dbhandler.inserter("insertSubject",subject_name,class_selected)
+        # i have added the subject but to add the respective question type with it we need to fetch the id which is
+        # auto generated so i need to fetch all subjects of a class and need to filter so that i can have subject_id
+        try:
+            queryname = 'fetchSubjects'
+            print("fetching subjects to get the id so that question types for that subject can be inserted")
+            subjects = utilities.fetchSubjects(queryname, class_selected)
+            subject_id=0
+            for subject in subjects:
+                if subject[1]==subject_name:
+                    subject_id=subject[0]
+                    print(f'The recently added subject have subject id= "{subject_id}"')
+                    break
+        except Exception as e:
+            print("An Exeption occure while fetching the subject id in route='add_subject'"+e)
+        for qtype in question_types:
+            dbhandler.inserter("insertSubjectQuestionTypes",subject_id,qtype)
+
         return jsonify({'status': 'success', 'message': f'Subject "{subject_name}" added to {class_selected}'})
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"Subject cant be added!!"})
