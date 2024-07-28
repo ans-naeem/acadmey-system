@@ -22,7 +22,10 @@ class utilities:
         result = dbhandler.getterWithId(queryname, subjectid)
         # classes=[row[1]for row in result]
         return result
-
+    def fetchpoems(queryname,subjectid,questiontype):
+        dbhandler=databaseHandler()
+        result=dbhandler.getterWithId(queryname,subjectid,questiontype)
+        return result
     def fetcherWithId(queryname,id):
         dbhandler=databaseHandler()
         result=dbhandler.getterWithId(queryname,id)

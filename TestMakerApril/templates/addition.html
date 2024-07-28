@@ -199,10 +199,26 @@
                 </select>
             </div>
         </div>
+		<div class="row mt-3" id="QuestionTypeSelectionForQuestion" style="display: none;">
+            <div class="col-12">
+                <label for="questionTypeListForQuestion">Select Question Type:</label>
+                <select id="questionTypeListForQuestion" class="form-control">
+                    <option value="">Select a Question Type</option>
+                </select>
+            </div>
+        </div>
 		<div class="row mt-3" id="chaptertSelectionForQuestion" style="display: none;">
             <div class="col-12">
                 <label for="chapterListForQuestion">Select Chapter:</label>
                 <select id="chapterListForQuestion" class="form-control">
+                    <option value="">Select a Chapter</option>
+                </select>
+            </div>
+        </div>
+		<div class="row mt-3" id="poemSelectionForQuestion" style="display: none;">
+            <div class="col-12">
+                <label for="poemListForQuestion">Select anyone:</label>
+                <select id="poemListForQuestion" class="form-control">
                     <option value="">Select a Chapter</option>
                 </select>
             </div>
@@ -246,6 +262,13 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="question_type" id="typeMCQS" value="MCQS">
                                 <label class="form-check-label" for="typeMCQS">MCQS</label>
+                            </div>
+							 <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_type" id="typeComprehension" value="Comprehension">
+                                <label class="form-check-label" for="typeComprehension">Comprehension</label>
+                            </div> <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_type" id="typeStanza" value="Stanza">
+                                <label class="form-check-label" for="typeStanza">Stanza</label>
                             </div>
                         </div>
                     </div>
@@ -500,7 +523,7 @@
 
     $(document).ready(function() {
     $('#addQuestionBtn').click(function() {
-        if ($('#questionForm').is(':hidden')&& $('#chaptertSelectionForQuestion').is(':hidden') && $('#classSelectionForQuestion').is(':hidden') && $('#subjectSelectionForQuestion').is(':hidden')) {
+        if ($('#questionForm').is(':hidden')&& $('#chaptertSelectionForQuestion').is(':hidden') && $('#classSelectionForQuestion').is(':hidden') && $('#subjectSelectionForQuestion').is(':hidden')&& $('#QuestionTypeSelectionForQuestion').is(':hidden')) {
             // Clear the message divs and hide them
             $('#messageforclass').hide();
             $('#classForm').hide();
@@ -512,6 +535,7 @@
 			$('#classSelectionForChapter').hide();
 			$('#messageforchapter').hide();
 			$('#messageforquestion').hide();
+			$('#QuestionTypeSelectionForQuestion').hide();
 			 
             // Clear the chapterName input            
             $.ajax({
@@ -541,6 +565,8 @@
 			$('#messageforchapter').hide();
 			$('#messageforsubject').hide();
 			$('#messageforclass').hide();
+			$('#QuestionTypeSelectionForQuestion').hide();
+			$('#poemListForQuestion').hide();
 			
 
 			
@@ -551,6 +577,7 @@
 	    
 
         var selectedClass = $(this).val();
+		
         if (selectedClass) {
             $('#selectedClassForQuestion').val(selectedClass);
             $.ajax({
@@ -579,34 +606,114 @@
         if (selectedSubject) {
             $('#selectedSubjectForQuestion').val(selectedSubject);
             $.ajax({
-                url: '/get_chapters/' + selectedSubject,  // Updated to use path parameter
+                url: '/get_question_types/' + selectedSubject,  // Updated to use path parameter
                 method: 'GET',
                 data: { classId: selectedSubject },
                 success: function(data) {
 
-                    $('#chapterListForQuestion').empty().append('<option value="">Select a chapter</option>');
+                    $('#questionTypeListForQuestion').empty().append('<option value="">Select a QuestionType</option>');
                     $.each(data, function(index, value) {
-                        $('#chapterListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        $('#questionTypeListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });	
 					$('#subjectSelectionForQuestion').hide();
-                    $('#chaptertSelectionForQuestion').show();
+                    $('#QuestionTypeSelectionForQuestion').show();
                 }
             });
         } else {
-            $('#chaptertSelectionForQuestion').hide();
+            $('#QuestionTypeSelectionForQuestion').hide();
         }
     });
+	
+	<!-- $('#subjectListForQuestion').change(function() { -->
+	    
 
-    $('#chapterListForQuestion').change(function() {
-        var selectedChapter = $(this).val();
-        if (selectedChapter) {
-            $('#selectedChapterForQuestion').val(selectedChapter);
+        <!-- var selectedSubject = $(this).val(); -->
+        <!-- if (selectedSubject) { -->
+            <!-- $('#selectedSubjectForQuestion').val(selectedSubject); -->
+            <!-- $.ajax({ -->
+                <!-- url: '/get_chapters/' + selectedSubject,  // Updated to use path parameter -->
+                <!-- method: 'GET', -->
+                <!-- data: { classId: selectedSubject }, -->
+                <!-- success: function(data) { -->
+
+                    <!-- $('#chapterListForQuestion').empty().append('<option value="">Select a chapter</option>'); -->
+                    <!-- $.each(data, function(index, value) { -->
+                        <!-- $('#chapterListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>'); -->
+                    <!-- });	 -->
+					<!-- $('#subjectSelectionForQuestion').hide(); -->
+                    <!-- $('#chaptertSelectionForQuestion').show(); -->
+                <!-- } -->
+            <!-- }); -->
+        <!-- } else { -->
+            <!-- $('#chaptertSelectionForQuestion').hide(); -->
+        <!-- } -->
+    <!-- }); -->
+
+    $('#questionTypeListForQuestion').change(function() {
+        var question_type = $(this).val();
+		var selectedSubject = $('#selectedSubjectForQuestion').val();
+		<!-- $('#chaptertSelectionForQuestion').show(); -->
+
+        if (question_type==1 || question_type==12) {
+			if (selectedSubject) {
+				$.ajax({
+					url: '/get_chapters/' + selectedSubject,  // Updated to use path parameter
+					method: 'GET',
+					data: { classId: selectedSubject },
+					success: function(data) {
+
+						$('#chapterListForQuestion').empty().append('<option value="">Select a chapter</option>');
+						$.each(data, function(index, value) {
+							$('#chapterListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+						});	
+						$('#QuestionTypeSelectionForQuestion').hide();
+						$('#chaptertSelectionForQuestion').show();
+					}
+				});
+			} else {
+            $('#chaptertSelectionForQuestion').hide();
+			$('#QuestionTypeSelectionForQuestion').hide();
+			}
+        } else if (question_type==13 || question_type==7|| question_type==10){
+			if (selectedSubject) {
+            $.ajax({
+                url: '/get_poem/' + selectedSubject +'/'+question_type,  // Updated to use path parameter
+                method: 'GET',
+                success: function(data) {
+                    $('#poemListForQuestion').empty().append('<option value="">Select among them</option>');
+                    $.each(data, function(index, value) {
+                        $('#poemListForQuestion').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                    $('#QuestionTypeSelectionForQuestion').hide();
+                    $('#poemSelectionForQuestion').show();
+                }
+            });
+				$('#QuestionTypeSelectionForQuestion').hide();
+				$('#questionForm').hide();
+			}
+		}
+	});
+	
+	$('#poemListForQuestion').change(function() {
+        var chapter = $(this).val();
+        if (chapter) {
+            $('#selectedChapterForQuestion').val(chapter);
             $('#questionForm').show();
         } else {
             $('#questionForm').hide();
         }
     });
-
+		
+    $('#chapterListForQuestion').change(function() {
+        var chapter = $(this).val();
+        if (chapter) {
+            $('#selectedChapterForQuestion').val(chapter);
+            $('#questionForm').show();
+        } else {
+            $('#questionForm').hide();
+        }
+    });
+	
     $('#addQuestionForm').submit(function(event) {
         event.preventDefault();
         var formData = $(this).serialize();

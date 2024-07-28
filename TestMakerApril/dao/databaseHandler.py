@@ -31,6 +31,17 @@ class databaseHandler:
         cursor.close()
         conn.close()
 
+    def insertQuestionExtend(self,queryname,ques_Desc,ques_num,subject_id,question_type):
+        dbhandler = databaseQueryHandler()
+        query = getattr(dbhandler, queryname)
+        conn = connection()
+        cursor = conn.cursor()
+        cursor.execute(query,(ques_Desc,ques_num,subject_id,question_type,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
 #this functionality not been implemented yet as its logic seems rough and tough right now
 
     def updater(self,tableName,params):
@@ -63,7 +74,6 @@ class databaseHandler:
         if(type==None):
             cursor.execute(query,(id,))
         else:
-            print("Select chap_ids are :"+str(id))
             #finding the count to make equal number of place holders
             temp_ids=len(id)
 
@@ -73,7 +83,8 @@ class databaseHandler:
 
             query=query.replace("placeholders",placeholders)
 
-            print("Query being used to fetch questions: "+query)
+            print("Query being used to fetch questions: "+queryname+':'+query)
+            print('parameter are :'+id+'and'+type)
             cursor.execute(query, (*id, type))
         data=cursor.fetchall()
         cursor.close()

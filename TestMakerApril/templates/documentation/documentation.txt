@@ -23,4 +23,15 @@ C.after selecting subject we should ask display the question types
 
 From that question type if user select ESSAYS then all the essay of that subject will be displayed.
 
+
+*****************************change in ERD***************************************
+
+1.if we need to store question which has some chapter number we store in question table
+2.if we need to store question which does not have any chapter rather they just have class like essays,stories,letters
+ we store them in a question_extend table
+3.There is a column in question_extend named question_num(not refered but comes from poem table),it can also be null.
+The purpose of poem table is to store the complete poem ,Ghazals,nazams and comprehension passage from which question can be asked and
+their assosiated questions are stored in question_extend table and have question_num column populated with the poem id from poem table.
+
+4.In case of essays,letters.. that column (question_num) can be null we only need to store the class_id and question_type.
  

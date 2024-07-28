@@ -126,13 +126,27 @@ def get_classes():
     classes = [{'id': row[0], 'name': row[1]} for row in classes]
     return jsonify(classes)
 
+# this function is used to get all type of question type typically called when we need to enter a new subject.
+#with same functionality there is another function named get_question_types.This used when we need to fetch
+#question_Type for a particular subect.
 @index_blueprint.route('/get_subject_question_types',methods=['GET'])
 def get_subject_question_types():
     queryname='fetchQuestionTypes'
     result=utilities.fetcherWithoutId(queryname)
     subjectQuestionType = [{'id': row[0], 'name': row[1]} for row in result]
     return jsonify(subjectQuestionType)
-
+@index_blueprint.route('/get_question_types/<int:subjectid>',methods=['GET'])
+def get_question_types(subjectid):
+    try:
+        queryname='fetchSubjectQuestionTypes'
+        print("calling fetchSubjectQuestionTypes for a subject ")
+        types=utilities.fetchChapters(queryname,subjectid)
+        question_types = [{'id': row[0], 'name': row[1]} for row in types]
+        print(question_types)
+        return jsonify(question_types)
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 'failure', 'message': f"ParticularQuestionTypes cant be fetched!!"})
 
 @index_blueprint.route('/get_subjects/<int:classid>', methods=['GET'])
 def get_subjects(classid):
@@ -156,6 +170,18 @@ def get_chapters(subjectid):
     except Exception as e:
         return jsonify({'status': 'failure', 'message': f"subject cant be fetched!!"})
 
+@index_blueprint.route('/get_poem/<subjectid>/<questiontype>',methods=['GET'])
+def get_poem(subjectid,questiontype):
+    try:
+        queryname='fetchPoems'
+        print("fetching poems")
+        poems=utilities.fetchpoems(queryname,subjectid,questiontype)
+        poem = [{'id': row[0], 'name': row[1]} for row in poems]
+        print (poem)
+        return jsonify(poem)
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 'failure', 'message': f"Query result cant be fetched!!"})
 @index_blueprint.route('/add_subject', methods=['POST'])
 def add_subject():
     try:
@@ -232,7 +258,14 @@ def add_question():
             question_type="L"
         elif question_type=="MCQS":
             question_type="M"
-
+        elif question_type=="Comprehension":
+            question_type="C"
+        elif question_type=="Stanza":
+            question_type="Z"
+        if question_type=="C":
+            dbhandler = databaseHandler()
+            dbhandler.insertQuestionExtend("insertQuestionExtend", question_desc, chapter_selected, subject_selected, question_type)
+            return jsonify({'status': 'success', 'message': f'MCQS added to {chapter_selected} '})
         if question_type=="M":
             dbhandler=databaseHandler()
             dbhandler.insertMcqs("insertMcqs",chapter_selected,question_desc,option_A,option_B,option_C,option_D)
